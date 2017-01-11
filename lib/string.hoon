@@ -4,7 +4,7 @@
 ::
 !:
 ::
-|_  str/tape
+|%
 ::
 ::::
 ::  Deducing properties of the string.
@@ -14,7 +14,7 @@
 ::
 ::  Sum of the values of the string's characters.
 ++  sum
-  |.
+  |=  str/tape
   ^-  @ud
   ::TODO  Would it be better to just use roll here?
   =|  sm/@ud
@@ -30,7 +30,7 @@
 ::
 ::  Last a characters.
 ++  tail
-  |=  a/@ud
+  |=  {str/tape a/@ud}
   ^-  tape
   ?:  (gte a (lent str))  str
   (slag (sub (lent str) a) str)
@@ -40,7 +40,7 @@
 ::
 ::  Characters from index a up to but excluding index b.
 ++  get
-  |=  {a/@ud b/@ud}
+  |=  {str/tape a/@ud b/@ud}
   ^-  tape
   ?:  (gth a b)  ~
   (swag [a (sub b a)] str)
@@ -59,14 +59,14 @@
 ::
 ::  Starts with nedl?
 ++  swith
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  ?
   ::TODO  find vs scag & compare?
   =((find nedl str) [~ 0])
 ::
 ::  Ends with nedl?
 ++  ewith
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  ?
   ?:  (gth (lent nedl) (lent str))  |
   ::TODO  find vs slag & compare?
@@ -74,30 +74,30 @@
 ::
 ::  Contains nedl?
 ++  cont
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  ?
   ?~  (find nedl str)  |  &
 ::
 ::  Contains any nedl?
 ++  cany
-  |=  nedls/(list tape)
+  |=  {str/tape nedls/(list tape)}
   ^-  ?
   =+  i=0
   =+  m=(lent nedls)
   |-
   ?:  =(i m)  |
-  ?:  (cont (snag i nedls))  &
+  ?:  (cont str (snag i nedls))  &
   $(i +(i))
 ::
 ::  Contains all nedls?
 ++  call
-  |=  nedls/(list tape)
+  |=  {str/tape nedls/(list tape)}
   ^-  ?
   =+  i=0
   =+  m=(lent nedls)
   |-
   ?:  =(i m)  &
-  ?.  (cont (snag i nedls))  |
+  ?.  (cont str (snag i nedls))  |
   $(i +(i))
 ::
 ::  Find the starting index of the first occurence of nedl in the string.
@@ -105,7 +105,7 @@
 ::
 ::  Find the starting index of the last occurence of nedl in the string.
 ++  finl
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  (unit @ud)
   ::TODO  Be less lazy, maybe.
   =+  res=(find (flop nedl) (flop str))
@@ -114,7 +114,7 @@
 ::
 ::  Find the starting index of the nth occurence of nedl in the string.
 ++  finn
-  |=  {nedl/tape n/@ud}
+  |=  {str/tape nedl/tape n/@ud}
   ^-  (unit @ud)
   ::TODO  Be less lazy, maybe.
   =+  res=(fand nedl str)
@@ -135,37 +135,37 @@
 ::
 ::  Trim whitespace off string left-side.
 ++  triml
-  |.
+  |=  str/tape
   ^-  tape
   (scan str ;~(pfix spac:poja (star next)))
 ::
 ::  Trim whitespace off string right-side.
 ++  trimr
-  |.
+  |=  str/tape
   ^-  tape
   ::TODO  Be less lazy, maybe.
   %-  flop
-  (triml(str (flop str)))
+  (triml (flop str))
 ::
 ::  Trim whitespace off string ends.
 ++  trim
-  |.
+  |=  str/tape
   ^-  tape
-  (triml(str $:trimr))
+  (triml (trimr str))
 ::
 ::  Delete b characters from the string, starting at index a.
 ::  (oust [a b] str)
 ::
 ::  Delete characters from index a up to but excluding index b.
 ++  del
-  |=  {a/@ud b/@ud}
+  |=  {str/tape a/@ud b/@ud}
   ^-  tape
   ?:  (gth a b)  ~
   (oust [a=a b=(sub b a)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Deletes the first occurence of nedl in the string.
 ++  delf
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  tape
   ::TODO  Be less lazy, maybe.
   =+  res=(find nedl str)
@@ -174,24 +174,24 @@
 ::
 ::  Deletes the last occurence of nedl in the string.
 ++  dell
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  tape
-  =+  res=(finl nedl)
+  =+  res=(finl str nedl)
   ?~  res  str
   ~&  res
   (oust [a=u.res b=(lent nedl)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Delete the nth occurence of nedl in the string.
 ++  deln
-  |=  {nedl/tape n/@ud}
+  |=  {str/tape nedl/tape n/@ud}
   ^-  tape
-  =+  res=(finn nedl n)
+  =+  res=(finn str nedl n)
   ?~  res  str
   (oust [a=u.res b=(lent nedl)] str)
 ::
 ::  Delete all occurences of nedl in the string.
 ++  dela
-  |=  nedl/tape
+  |=  {str/tape nedl/tape}
   ^-  tape
   =+  res=(fand nedl str)
   ?:  =((lent res) 0)  str
@@ -204,37 +204,37 @@
 ::
 ::  Replace characters at index a up to but excluding index b with string s.
 ++  rep
-  |=  {{a/@ b/@} s/tape}
+  |=  {str/tape {a/@ b/@} s/tape}
   ^-  tape
   :(welp (scag a str) s (slag b str))
 ::
 ::  Replace the first occurence of nedl in the string with s.
 ++  repf
-  |=  {nedl/tape s/tape}
+  |=  {str/tape nedl/tape s/tape}
   ^-  tape
   =+  res=(find nedl str)
   ?~  res  str
-  (rep [u.res (add u.res (lent s))] s)
+  (rep str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace the last occurence of nedl in the string with s.
 ++  repl
-  |=  {nedl/tape s/tape}
+  |=  {str/tape nedl/tape s/tape}
   ^-  tape
-  =+  res=(finl nedl)
+  =+  res=(finl str nedl)
   ?~  res  str
-  (rep [u.res (add u.res (lent s))] s)
+  (rep str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace the nth occurence of nedl in the string with s.
 ++  repn
-  |=  {nedl/tape s/tape n/@ud}
+  |=  {str/tape nedl/tape s/tape n/@ud}
   ^-  tape
-  =+  res=(finn nedl n)
+  =+  res=(finn str nedl n)
   ?~  res  str
-  (rep [u.res (add u.res (lent s))] s)
+  (rep str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace all occurences of nedl in the string with s.
 ++  repa
-  |=  {nedl/tape s/tape}
+  |=  {str/tape nedl/tape s/tape}
   ^-  tape
   %+  roll
   (scan str (star ;~(pose (cold (crip s) (jest (crip nedl))) next)))
@@ -248,13 +248,13 @@
 ::
 ::  Split string by string delimiter.
 ++  split
-  |=  delim/tape
+  |=  {str/tape delim/tape}
   ^-  (list tape)
-  (splitr (jest (crip delim)))
+  (splitr str (jest (crip delim)))
 ::
 ::  Split string by parsing rule delimiter.
 ++  splitr
-  |*  delim/rule
+  |*  {str/tape delim/rule}
   ^-  (list tape)
   %+  fall
     (rust str (more delim (star ;~(less delim next))))
