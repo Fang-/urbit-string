@@ -58,14 +58,14 @@
 ::  (fand nedl str)
 ::
 ::  Starts with nedl?
-++  swith
+++  starts-with
   |=  {str/tape nedl/tape}
   ^-  ?
   ::TODO  find vs scag & compare?
   =((find nedl str) [~ 0])
 ::
 ::  Ends with nedl?
-++  ewith
+++  ends-with
   |=  {str/tape nedl/tape}
   ^-  ?
   ?:  (gth (lent nedl) (lent str))  |
@@ -73,38 +73,38 @@
   =((find nedl str) [~ (sub (lent str) (lent nedl))])
 ::
 ::  Contains nedl?
-++  cont
+++  contains
   |=  {str/tape nedl/tape}
   ^-  ?
   ?~  (find nedl str)  |  &
 ::
 ::  Contains any nedl?
-++  cany
+++  contains-any
   |=  {str/tape nedls/(list tape)}
   ^-  ?
   =+  i=0
   =+  m=(lent nedls)
   |-
   ?:  =(i m)  |
-  ?:  (cont str (snag i nedls))  &
+  ?:  (contains str (snag i nedls))  &
   $(i +(i))
 ::
 ::  Contains all nedls?
-++  call
+++  contains-all
   |=  {str/tape nedls/(list tape)}
   ^-  ?
   =+  i=0
   =+  m=(lent nedls)
   |-
   ?:  =(i m)  &
-  ?.  (cont str (snag i nedls))  |
+  ?.  (contains str (snag i nedls))  |
   $(i +(i))
 ::
 ::  Find the starting index of the first occurence of nedl in the string.
 ::  (find nedl str)
 ::
 ::  Find the starting index of the last occurence of nedl in the string.
-++  finl
+++  find-last
   |=  {str/tape nedl/tape}
   ^-  (unit @ud)
   ::TODO  Be less lazy, maybe.
@@ -113,7 +113,7 @@
   [~ (sub (lent str) (add (lent nedl) u.res))]
 ::
 ::  Find the starting index of the nth occurence of nedl in the string.
-++  finn
+++  find-nth
   |=  {str/tape nedl/tape n/@ud}
   ^-  (unit @ud)
   ::TODO  Be less lazy, maybe.
@@ -134,37 +134,37 @@
 ::  (flop str)
 ::
 ::  Trim whitespace off string left-side.
-++  triml
+++  trim-left
   |=  str/tape
   ^-  tape
   (scan str ;~(pfix spac:poja (star next)))
 ::
 ::  Trim whitespace off string right-side.
-++  trimr
+++  trim-right
   |=  str/tape
   ^-  tape
   ::TODO  Be less lazy, maybe.
   %-  flop
-  (triml (flop str))
+  (trim-left (flop str))
 ::
 ::  Trim whitespace off string ends.
 ++  trim
   |=  str/tape
   ^-  tape
-  (triml (trimr str))
+  (trim-left (trim-right str))
 ::
 ::  Delete b characters from the string, starting at index a.
 ::  (oust [a b] str)
 ::
 ::  Delete characters from index a up to but excluding index b.
-++  del
+++  delete
   |=  {str/tape a/@ud b/@ud}
   ^-  tape
   ?:  (gth a b)  ~
   (oust [a=a b=(sub b a)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Deletes the first occurence of nedl in the string.
-++  delf
+++  delete-first
   |=  {str/tape nedl/tape}
   ^-  tape
   ::TODO  Be less lazy, maybe.
@@ -173,24 +173,24 @@
   (oust [a=u.res b=(lent nedl)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Deletes the last occurence of nedl in the string.
-++  dell
+++  delete-last
   |=  {str/tape nedl/tape}
   ^-  tape
-  =+  res=(finl str nedl)
+  =+  res=(find-last str nedl)
   ?~  res  str
   ~&  res
   (oust [a=u.res b=(lent nedl)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Delete the nth occurence of nedl in the string.
-++  deln
+++  delete-nth
   |=  {str/tape nedl/tape n/@ud}
   ^-  tape
-  =+  res=(finn str nedl n)
+  =+  res=(find-nth str nedl n)
   ?~  res  str
   (oust [a=u.res b=(lent nedl)] str)
 ::
 ::  Delete all occurences of nedl in the string.
-++  dela
+++  delete-all
   |=  {str/tape nedl/tape}
   ^-  tape
   =+  res=(fand nedl str)
@@ -203,37 +203,37 @@
   $(i (sub i 1), s (oust [a=(snag (sub i 1) res) b=l] s))
 ::
 ::  Replace characters at index a up to but excluding index b with string s.
-++  rep
+++  replace
   |=  {str/tape {a/@ b/@} s/tape}
   ^-  tape
   :(welp (scag a str) s (slag b str))
 ::
 ::  Replace the first occurence of nedl in the string with s.
-++  repf
+++  replace-first
   |=  {str/tape nedl/tape s/tape}
   ^-  tape
   =+  res=(find nedl str)
   ?~  res  str
-  (rep str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace the last occurence of nedl in the string with s.
-++  repl
+++  replace-last
   |=  {str/tape nedl/tape s/tape}
   ^-  tape
-  =+  res=(finl str nedl)
+  =+  res=(find-last str nedl)
   ?~  res  str
-  (rep str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace the nth occurence of nedl in the string with s.
-++  repn
+++  replace-nth
   |=  {str/tape nedl/tape s/tape n/@ud}
   ^-  tape
-  =+  res=(finn str nedl n)
+  =+  res=(find-nth str nedl n)
   ?~  res  str
-  (rep str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (add u.res (lent s))] s)
 ::
 ::  Replace all occurences of nedl in the string with s.
-++  repa
+++  replace-all
   |=  {str/tape nedl/tape s/tape}
   ^-  tape
   %+  roll
@@ -250,10 +250,10 @@
 ++  split
   |=  {str/tape delim/tape}
   ^-  (list tape)
-  (splitr str (jest (crip delim)))
+  (split-rule str (jest (crip delim)))
 ::
 ::  Split string by parsing rule delimiter.
-++  splitr
+++  split-rule
   |*  {str/tape delim/rule}
   ^-  (list tape)
   %+  fall
