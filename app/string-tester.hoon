@@ -101,6 +101,10 @@
   ~&  %split
   (test split:string ["ab, c!, 1,2 " ", "] ["ab" "c!" "1,2 " ~])
 
+  ~&  %glue
+  (test glue:string [["a" "bc" "d" ~] ", "] "a, bc, d")
+  (test glue:string [["a" "bc" "d" ~] ""] "abcd")
+
   ==
   ~?  (levy (ly results) |=(r/? r))  %passed
   [~ +>.$]

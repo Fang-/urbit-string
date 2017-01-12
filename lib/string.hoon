@@ -259,4 +259,16 @@
     (rust str (more delim (star ;~(less delim next))))
   [str ~]
 ::
+::::
+::  Create a string from a non-string.
+::
+::  Glue a list of strings into a single string using a delimiter.
+++  glue
+  |=  {pieces/(list tape) delim/tape}
+  ^-  tape
+  %+  roll  pieces
+  |=  {piece/tape str/tape}
+  ?~  str  piece
+  :(welp str delim piece)
+::
 --
