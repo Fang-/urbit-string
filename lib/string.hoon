@@ -178,7 +178,6 @@
   ^-  tape
   =+  res=(find-last str nedl)
   ?~  res  str
-  ~&  res
   (oust [a=u.res b=(lent nedl)] str)  ::TODO  Remove faces when bug is fixed.
 ::
 ::  Delete the nth occurence of nedl in the string.
@@ -214,7 +213,7 @@
   ^-  tape
   =+  res=(find nedl str)
   ?~  res  str
-  (replace str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (sub (add u.res (lent s)) 2)] s)
 ::
 ::  Replace the last occurence of nedl in the string with s.
 ++  replace-last
@@ -222,7 +221,7 @@
   ^-  tape
   =+  res=(find-last str nedl)
   ?~  res  str
-  (replace str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (sub (add u.res (lent s)) 2)] s)
 ::
 ::  Replace the nth occurence of nedl in the string with s.
 ++  replace-nth
@@ -230,7 +229,7 @@
   ^-  tape
   =+  res=(find-nth str nedl n)
   ?~  res  str
-  (replace str [u.res (add u.res (lent s))] s)
+  (replace str [u.res (sub (add u.res (lent s)) 2)] s)
 ::
 ::  Replace all occurences of nedl in the string with s.
 ++  replace-all
