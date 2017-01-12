@@ -106,7 +106,7 @@
   (test glue:string [["a" "bc" "d" ~] ""] "abcd")
 
   ==
-  ~?  (levy (ly results) |=(r/? r))  %passed
+  ~?  (levy (ly results) |=(r/? r))  [%all-passed "(:"]
   [~ +>.$]
 
 ++  test
