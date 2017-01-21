@@ -124,6 +124,38 @@
 ::  Find all occurences of nedl in the string.
 ::  (fand nedl str)
 ::
+::  Finds the first occurence of any of the nedls, returning the index and the
+::   nedl found at that index.
+++  find-any
+  |=  {str/tape nedls/(list tape)}
+  =|  best/(unit {i/@ud nedl/tape})
+  ^+  best
+  =+  ni=0
+  |-  ^+  best
+  ?:  =(ni (lent nedls))  best
+  =+  res=(find (snag ni nedls) str)
+  %=  $
+    ni    (add ni 1)
+    best  ?~  res  best
+          [~ u.res (snag ni nedls)]
+    str   ?~  res  str
+          (scag u.res str)
+  ==
+::
+::  Finds the last occurence of any of the nedls, returning the index and the
+::   nedl found at that index.
+++  find-last-any
+  |=  {str/tape nedls/(list tape)}
+  ^-  (unit {i/@ud nedl/tape})
+  =/  best
+    %+  find-any
+    (flop str)
+    (turn nedls flop)
+  ?~  best  best
+  :+  ~
+  (sub (lent str) (add (lent nedl.u.best) i.u.best))
+  (flop nedl.u.best)
+::
 ::::
 ::  Modifying the string into a new string.
 ::

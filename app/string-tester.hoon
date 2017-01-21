@@ -49,6 +49,14 @@
   (test find-nth:string ["0103" "0" 2] [~ 2])
   (test find-nth:string ["0103" "0" 3] ~)
 
+  ~&  %find-first-any
+  (test find-any:string ["012345" ["12" "2" "4" ~]] [~ 1 "12"])
+  (test find-any:string ["012345" ["a" "b" "c" ~]] ~)
+
+  ~&  %find-last-any
+  (test find-last-any:string ["012345" ["1" "2" "34" ~]] [~ 3 "34"])
+  (test find-last-any:string ["012345" ["a" "b" "c" ~]] ~)
+
   ~&  %trim-left
   (test trim-left:string " a b  c  " "a b  c  ")
 
