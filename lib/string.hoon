@@ -301,6 +301,110 @@
     (flop `(list tape)`[str lins])
   $(lins [(scag w str) lins], str (slag w str))
 ::
+::  Split string into strings with a maximum length of w, taking generic word-
+::   wrapping rules for written texts into account.
+++  wrap
+  |=  {str/tape w/@ud}
+  ^-  (list tape)
+  (wrapper str w [" " "-" ~] %both "" "" %keep)
+::
+::  Split string into strings with a maximum length of w, taking the specified
+::   word-wrapping rules into account.
+::  Configuration:
+::   break-after    Strings considered safe to break after.
+::   trim           Whether/on which side to trim whitespace off lines.
+::   first-indent   String with which the first line is indented.
+::   next-indent    String with which each subsequent line is indented.
+::   tabs           What to do with tab characters.
+::    $keep          Leave tab characters alone.
+::    $expand        Tab characters get converted to n spaces.
+::    $position      Tab characters get converted to spaces to align the
+::                    subsequent characters at an index where  =((mod i n) 0).
+++  wrapper
+  |=  $:  str/tape
+          w/@ud
+          break-after/(list tape)
+          trim/?($none $left $right $both)
+          first-indent/tape
+          next-indent/tape
+          tabs/?($keep {$expand n/@ud} {$position n/@ud})
+      ==
+  ^-  (list tape)
+  ::  Indents that fill the available space are impossible to solve for.
+  ?:  ?|  (gte (lent first-indent) w)
+          (gte (lent next-indent) w)
+      ==
+    ~
+  ::  Preprocess tabs if needed.
+  =.  str
+    ?:  ?=({$expand n/@ud} tabs)
+      (replace-all str "\09" (reap n.tabs ' '))
+    str
+  =+  indent=first-indent
+  =|  lins/(list tape)
+  %-  flop
+  ::  Process remaining text until we run out.
+  |-  ^+  lins
+  ::  Do indentation and left-side trimming.
+  =.  str
+    %+  weld  indent
+    ?:  ?=(?($left $both) trim)
+      (trim-left str)
+    str
+  ::  Tab positioning.
+  =.  str
+    ?.  ?=({$position n/@ud} tabs)
+      str
+    =+  i=0
+    |-  ^+  str
+    =+  ti=(find "\09" str)
+    ::  We want to stop if there are no more tabs to process, or they are
+    ::   outside of the possible line range.
+    ?~  ti  str
+    ?:  (gte u.ti w)  str
+    %=  $
+      i  (add i 1)
+      str  %^  replace  str
+           [u.ti (add u.ti 1)]
+           %+  reap
+           ~&  [%reaping u.ti]
+           ::  Don't write beyond w, tab spaces shouldn't have to get wrapped.
+           %+  min  (sub w u.ti)
+           (sub n.tabs (mod u.ti n.tabs))
+           ' '
+    ==
+  ::  If the processed string fits our w, it must be the last line. Produce!
+  ?:  (lte (lent str) w)
+    ~&  [str lins]
+    [str lins]
+  ::  To prevent doing unnecessary work on parts of the string that will never
+  ::   make the cut, work with the longest possible line from here on out.
+  ::   We don't overwrite str because we will need that data for the next line.
+  =+  lin=(scag w str)
+  ::  Find the largest possible index to break at.
+  =/  breaki
+    =/  res
+      %+  find-last-any
+      ::  Exclude the indent from search.
+      (slag (lent indent) lin)
+      break-after
+    ?~  res  w
+    ::  Be sure to account for the indent we excluded from the search,
+    %+  add  (lent indent)
+    ::  and to break *after* the breakpoint.
+    %+  add  (lent nedl.u.res)
+    i.u.res
+  %=  $
+    lins  :_  lins
+          %.  (scag breaki str)
+          ::  Trim the right side of our line if we were asked to.
+          ?:  ?=(?($right $both) trim)
+            trim-right
+          same
+    str   (slag breaki str)
+    indent  next-indent
+  ==
+::
 ::::
 ::  Create a string from a non-string.
 ::
