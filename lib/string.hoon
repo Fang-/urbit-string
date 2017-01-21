@@ -291,6 +291,16 @@
     (rust str (more delim (star ;~(less delim next))))
   [str ~]
 ::
+::  Split string into strings with a maximum length of w.
+++  cram
+  |=  {str/tape w/@ud}
+  ^-  (list tape)
+  =|  lins/(list tape)
+  |-  ^+  lins
+  ?:  (lte (lent str) w)
+    (flop `(list tape)`[str lins])
+  $(lins [(scag w str) lins], str (slag w str))
+::
 ::::
 ::  Create a string from a non-string.
 ::
