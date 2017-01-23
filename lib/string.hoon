@@ -367,7 +367,6 @@
       str  %^  replace  str
            [u.ti (add u.ti 1)]
            %+  reap
-           ~&  [%reaping u.ti]
            ::  Don't write beyond w, tab spaces shouldn't have to get wrapped.
            %+  min  (sub w u.ti)
            (sub n.tabs (mod u.ti n.tabs))
@@ -375,7 +374,6 @@
     ==
   ::  If the processed string fits our w, it must be the last line. Produce!
   ?:  (lte (lent str) w)
-    ~&  [str lins]
     [str lins]
   ::  To prevent doing unnecessary work on parts of the string that will never
   ::   make the cut, work with the longest possible line from here on out.
