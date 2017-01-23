@@ -235,7 +235,7 @@
 ::
 ::  Replace characters at index a up to but excluding index b with string s.
 ++  replace
-  |=  {str/tape {a/@ b/@} s/tape}
+  |=  {str/tape {a/@ud b/@ud} s/tape}
   ^-  tape
   :(welp (scag a str) s (slag b str))
 ::
