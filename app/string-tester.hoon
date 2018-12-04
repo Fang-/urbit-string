@@ -1,7 +1,7 @@
 ::  Primitive tester for the String library.
 /+  string
 !:
-|_  {bowl $~}
+|_  {bowl:gall $~}
 
 ++  poke-noun
   |=  *
