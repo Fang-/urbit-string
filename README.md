@@ -6,41 +6,18 @@ Work in progress, feedback and pull requests welcome!
 
 ### Installing / Using
 
-1. Copy lib/string.hoon into {pier}/{desk}/lib
-1. Copy app/string-tester.hoon into {pier}/{desk}/app
+1. clone this repo
+1. cp -r ./* pier/desk/
 1. From the dojo:
   * |start %string-tester
   * :string-tester %test
 
-You should see:
+You will then see a series of tests and then a final status...
+
 ```
 >=
 %sum
 %tail
-%get
-%starts-with
-%ends-with
-%contains
-%contains-any
-%contains-all
-%find-last
-%find-nth
-%find-first-any
-%find-last-any
-%trim-left
-%trim-right
-%trim
-%delete
-%delete-first
-%delete-last
-%delete-nth
-%delete-all
-%replace
-%replace-first
-%replace-last
-%replace-nth
-%replace-all
-%split
-%glue
+... more %test_names ...
 [%all-passed "(:"]
 ```
