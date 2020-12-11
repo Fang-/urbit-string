@@ -2,7 +2,7 @@
 
 String processing library for Urbit.
 
-Work in progress, feedback and pull requests welcome!
+Extremely stale. Likely still usable, but definitely dated. Any future work in this area will go into [suite/lib](https://github.com/fang-/suite/tree/master/lib).
 
 ### Installing / Using
 
